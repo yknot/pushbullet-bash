@@ -3,32 +3,34 @@
 # Bash interface to the PushBullet api.
 
 # Author: Red5d - https://github.com/Red5d
+# Modifications: Andrew Yale
 
 
-CONFIG=~/.config/pushbullet
+#CONFIG=api_key
 API_URL=https://api.pushbullet.com/v2
 
-source $CONFIG
+#source $CONFIG
+API_KEY=$(<api_key)
 
 printUsage() {
 echo "Usage: pushbullet <action> <device> <type> <data>
 
-Actions: 
+Actions:
 list - Lists all devices in your PushBullet account. (does not require
        additional parameters)
 push - Pushes data to a device. (the device name can simply be a unique part of
        the name that \"list\" returns)
-pushes active - Get your 'active' pushes (pushes that haven't been deleted) 
+pushes active - Get your 'active' pushes (pushes that haven't been deleted)
 delete - Deletes a push, you must give the push 'iden', see https://docs.pushbullet.com/v2/pushes/
 
-Types: 
+Types:
 note
 address
 list
 file
 link
 
-Type Parameters: 
+Type Parameters:
 (all parameters must be put inside quotes if more than one word)
 \"note\" type: 	give the title, then the note text. The note text can also be
                 given via stdin, leaving the note text field empty.
@@ -40,7 +42,7 @@ Type Parameters:
 "
 }
 
-function getactivepushes () { 
+function getactivepushes () {
     allpushes=$(./JSON.sh -l)
     activepushes=$(echo "$allpushes" | egrep "\[\"pushes\",[0-9]+,\"active\"\].*true"|while read line; do echo "$line"|cut -f 2 -d ,; done)
     for id in $activepushes
@@ -66,7 +68,7 @@ if [[ "$res" != "created" ]]; then
 	echo "Error submitting the request. The POST error message was:"
 fi
 echo $res
-} 
+}
 
 if [ "$1" = "" ];then
 
@@ -133,6 +135,7 @@ push)
 		else
 			curlres=$(curl -s "$API_URL/pushes" -u $API_KEY: -d device_iden=$dev_id -d type=note -d title="$4" --data-urlencode body="$body" -X POST)
 		fi
+
 		checkCurlOutput "$curlres"
 
 	;;
