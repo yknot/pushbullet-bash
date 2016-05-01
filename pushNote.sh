@@ -5,4 +5,4 @@
 # Author: Andrew Yale
 
 
-./pushbullet.sh push "Nexus 5" note "$1 completed" "$1 completed on $2"
+./pushbullet.sh push "Nexus 5X" note "$1 completed" "$1 completed on $2"
